@@ -33,30 +33,35 @@ class Cable : public CableInherit
     /** @brief Constructs Cable State Manager
      *
      * @param[in] bus       - The Dbus bus object
-     * @param[in] busName   - The Dbus name to own
      * @param[in] objPath   - The Dbus object path
+     * @param[in] cableNum  - The cable number
      */
+	 
+	//Cable() = delete;
+	//~Cable() = default;
+	Cable(const Cable&) = delete;
+	Cable& operator=(const Cable&) = delete;
+	Cable(Cable&&) = delete;
+	Cable& operator=(Cable&&) = delete;
+		
     Cable(sdbusplus::bus::bus& bus, const char* objPath, const uint32_t cableNum) :
-        CableInherit(bus, objPath, true), bus(bus), fp(NULL) {    
-			if(Open() == -1) {
-				std::cerr << "Open error!" << std::endl;
+        CableInherit(bus, objPath, true), fp(NULL) { 
+		
+		if(Open() == -1) {
+			std::cerr << "Open error!" << std::endl;
 		}
 		
 		slotAddr(cableNum);
-
 		emit_object_added();
     };
 	
 	Cable() {
 	};
-
-	~Cable() {
-		Close();
-	};
+	
 	
 	int Open();
-	int32_t GetCableData(const std::string cableName)
-	vector<string> Split(const string& info,const string& pattern);
+	int32_t GetCableData(const std::string& cableName);
+	vector<string> Split(string& info, const string& pattern);
 	void Close();
 	
 	uint32_t cableType() const override;
@@ -70,13 +75,12 @@ class Cable : public CableInherit
 	uint32_t status() const override;
 	
 
-	
   private:
   
 	FILE* fp;
 	
     /** @brief Persistent sdbusplus DBus bus connection. **/
-    sdbusplus::bus::bus& bus;
+    //sdbusplus::bus::bus& bus;
 	
 
 };
