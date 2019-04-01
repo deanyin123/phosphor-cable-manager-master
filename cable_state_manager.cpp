@@ -14,9 +14,6 @@ namespace manager
 // When you see server:: you know we're referencing our base class
 namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 
-	Cable::Cable(){
-		
-	};
 	
 	Cable::~Cable() {
 		Close();
@@ -72,7 +69,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		if(!info.empty()) {	
 			char * strc = new char[strlen(info.c_str()) + 1];
 			strcpy(strc, info.c_str());
-			char* tmpStr = strtok(strc.c_str(), pattern.c_str());			
+			char* tmpStr = strtok(strc, pattern.c_str());			
 			while(tmpStr != NULL) {
 				value.push_back(std::string(tmpStr));
 				tmpStr = strtok(NULL, pattern.c_str());
@@ -186,5 +183,3 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 } // namespace manager
 } // namespace cable
 } // namespace phosphor
-
-
