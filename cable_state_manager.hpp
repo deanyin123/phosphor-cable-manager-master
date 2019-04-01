@@ -37,8 +37,8 @@ class Cable : public CableInherit
      * @param[in] cableNum  - The cable number
      */
 	 
-	//Cable() = delete;
-	//~Cable() = default;
+	Cable();
+	~Cable();
 	Cable(const Cable&) = delete;
 	Cable& operator=(const Cable&) = delete;
 	Cable(Cable&&) = delete;
@@ -55,8 +55,6 @@ class Cable : public CableInherit
 		emit_object_added();
     };
 	
-	Cable() {
-	};
 	
 	
 	int Open();
