@@ -14,6 +14,10 @@ namespace manager
 // When you see server:: you know we're referencing our base class
 namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 
+	Cable::Cable(){
+		
+	};
+	
 	Cable::~Cable() {
 		Close();
 	}
@@ -38,7 +42,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		std::map<std::string, uint32_t>::iterator iter; 
 		
 		//while(getline(fp, line)) {
-		while(getline(&line, &len, fp)) != -1) {
+		while(getline(&line, &len, fp) != -1) {
 			
 			std::string lineStr = line;
 			if(lineStr.substr(0, 3) == "CAB") {
@@ -62,15 +66,18 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 	}
 	
 	
-	std::vector<std::string> Cable::Split(std::string& info,const std::string& pattern) {		
+	std::vector<std::string> Cable::Split(std::string& info, const std::string& pattern) {		
 		std::vector<std::string> value;
 		
-		if(!info.empty()) {		
-			char* tmpStr = strtok(info.c_str(), pattern.c_str());			
+		if(!info.empty()) {	
+			char * strc = new char[strlen(info.c_str()) + 1];
+			strcpy(strc, info.c_str());
+			char* tmpStr = strtok(strc.c_str(), pattern.c_str());			
 			while(tmpStr != NULL) {
 				value.push_back(std::string(tmpStr));
 				tmpStr = strtok(NULL, pattern.c_str());
-			}			
+			}
+			delete[] strc;
 		}
 		
 		return value;
@@ -179,4 +186,5 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 } // namespace manager
 } // namespace cable
 } // namespace phosphor
+
 
