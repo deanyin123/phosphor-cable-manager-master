@@ -25,7 +25,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		fp = NULL;
 	}
 	
-	uint32_t Cable::GetCableData(const std::string cableName) {
+	int32_t Cable::GetCableData(const std::string cableName) {
 
 		std::string line;
 		std::vector<std::string> value;
@@ -63,103 +63,100 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		return value;
 	}
 	
-	uint32_t Cable::CableType() const {
+	uint32_t Cable::cableType() const {
 		
 		Cable cable;
 		
-		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::SlotAddr();
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
 		uint32_t cableData = cable.GetCableData(cableName);
-		if(cableData == -1) {
-			std::cerr << "GetCableData error!" <<std::endl;
-			return -1;
-		}
+		
 		
 		return  (cableData & 0x07);
 	}
 
-	uint32_t Present() const {
+	uint32_t Cable::present() const {
 		
 		Cable cable;
 		
-		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::SlotAddr();
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
 		uint32_t cableData = cable.GetCableData(cableName);		
 		
 		return  ((cableData >> 7) & 0x01);
 	}
 	
-	uint32_t LinkSpeed() const {
+	uint32_t Cable::linkSpeed() const {
 		
 		Cable cable;
 		
-		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::SlotAddr();
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
 		uint32_t cableData = cable.GetCableData(cableName);
 		
 		return  ((cableData >> 8) & 0x07);
 	}
 	
-	uint32_t LinkWidth() const {
+	uint32_t Cable::linkWidth() const {
 		
 		Cable cable;
 		
-		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::SlotAddr();
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
 		uint32_t cableData = cable.GetCableData(cableName);		
 		
 		return  ((cableData >> 11) & 0x0f);
 	}
 	
-	uint32_t LinkActive() const {
+	uint32_t Cable::linkActive() const {
 		
 		Cable cable;
 		
-		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::SlotAddr();
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
 		uint32_t cableData = cable.GetCableData(cableName);
 		
 		return  ((cableData >> 15) & 0x01);
 	}
 
-	uint32_t PartitionID() const {
+	uint32_t Cable::partitionID() const {
 		
 		Cable cable;
 		
-		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::SlotAddr();
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
 		uint32_t cableData = cable.GetCableData(cableName);
 		
 		return  ((cableData >> 16) & 0x0f);
 	}
 	
-	uint32_t Invalid() const  {
+	uint32_t Cable::invalid() const  {
 		
 		Cable cable;
 		
-		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::SlotAddr();
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
 		uint32_t cableData = cable.GetCableData(cableName);
 		
 		return  ((cableData >> 20) & 0x0f);
 	}
 	
-	uint32_t UspDsp() const  {
+	uint32_t Cable::uspDsp() const  {
 		
 		Cable cable;
 		
-		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::SlotAddr();
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
 		uint32_t cableData = cable.GetCableData(cableName);
 
 		return  ((cableData >> 24) & 0x0f);
 	}
 
-	uint32_t Status() const {
+	uint32_t Cable::status() const {
 		
 		Cable cable;
 		
-		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::SlotAddr();
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
 		uint32_t cableData = cable.GetCableData(cableName);
 		
