@@ -11,9 +11,10 @@ int main(int argc, char**)
 	sdbusplus::server::manager::manager objManager(bus, objPathInst.c_str());// Add sdbusplus ObjectManager.
 	std::vector<std::unique_ptr<phosphor::cable::manager::Cable>> cables;
 	
-    for(int i = 1; i <= 12; i++) {
-		auto objPathInst += std::string(i);
-		cables.emplace_back(std::make_unique<phosphor::cable::manager::Cable>(bus, objPathInst.c_str()));
+    for(int i = 0; i < 12; i++) {
+		auto cableNum = i + 1;
+		auto objPathInst += std::string(i);		
+		cables.emplace_back(std::make_unique<phosphor::cable::manager::Cable>(bus, objPathInst.c_str(), cableNum));
 	}
 
     bus.request_name(CABLE_BUSNAME);
