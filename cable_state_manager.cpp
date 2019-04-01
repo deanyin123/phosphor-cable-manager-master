@@ -14,6 +14,10 @@ namespace manager
 // When you see server:: you know we're referencing our base class
 namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 
+	Cable::~Cable() {
+		Close();
+	}
+	
 	int Cable::Open() {
 		fp = popen("i2cusi -c cbinfo", "r");
 		return  fp != NULL ? 0 : -1;
@@ -25,21 +29,30 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		fp = NULL;
 	}
 	
-	int32_t Cable::GetCableData(const std::string cableName) {
+	int32_t Cable::GetCableData(const std::string& cableName) {
 
-		std::string line;
+		char* line = NULL;
+		uint32_t len = 0;
 		std::vector<std::string> value;
 		std::map<std::string, uint32_t> cableInfo;
 		std::map<std::string, uint32_t>::iterator iter; 
 		
-		while(getline(fp, line)) {
+		//while(getline(fp, line)) {
+		while(getline(&line, &len, fp)) != -1) {
 			
-			if(line.substr(0, 3) == "CAB") {
-				value = Split(line, ":");
-				cableInfo.insert(make_pair(value.front(), value.back()));
-			}		
+			std::string lineStr = line;
+			if(lineStr.substr(0, 3) == "CAB") {
+				value = Split(lineStr, ":");
+				cableInfo.insert(make_pair(value.front(), atoi(value.back().c_str())));
+			}
+			
+			if(line != NULL) {
+				free(line);	
+				line = NULL;
+			}
 		}
 		
+
 		if((iter = cableInfo.find(cableName)) == cableInfo.end()) {
 			std::cerr << "CableInformation not exit!" << std::endl;
 			return -1;
@@ -49,7 +62,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 	}
 	
 	
-	std::vector<std::string> Cable::Split(const std::string& info,const std::string& pattern) {		
+	std::vector<std::string> Cable::Split(std::string& info,const std::string& pattern) {		
 		std::vector<std::string> value;
 		
 		if(!info.empty()) {		
@@ -166,3 +179,4 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 } // namespace manager
 } // namespace cable
 } // namespace phosphor
+
