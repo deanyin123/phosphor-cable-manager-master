@@ -37,7 +37,7 @@ class Cable : public CableInherit
      * @param[in] cableNum  - The cable number
      */
 	 
-	Cable();
+	Cable() = default;
 	~Cable();
 	Cable(const Cable&) = delete;
 	Cable& operator=(const Cable&) = delete;
