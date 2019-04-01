@@ -13,7 +13,7 @@ int main(int argc, char**)
 	
     for(int i = 0; i < 12; i++) {
 		auto cableNum = i + 1;
-		auto objPathInst += std::string(i);		
+		objPathInst += std::string(i);		
 		cables.emplace_back(std::make_unique<phosphor::cable::manager::Cable>(bus, objPathInst.c_str(), cableNum));
 	}
 
