@@ -13,7 +13,9 @@ namespace manager
 
 // When you see server:: you know we're referencing our base class
 namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
-
+	
+	Cable::Cable() {
+	}
 	
 	Cable::~Cable() {
 		Close();
