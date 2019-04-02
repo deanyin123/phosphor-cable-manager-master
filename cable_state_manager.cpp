@@ -85,7 +85,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		return value;
 	}
 	
-	uint32_t Cable::cableType() const {
+	uint32_t Cable::cableType() {
 		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
@@ -95,7 +95,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		return  (cableData & 0x07);
 	}
 
-	uint32_t Cable::present() const {
+	uint32_t Cable::present() {
 
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
@@ -104,7 +104,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		return  ((cableData >> 7) & 0x01);
 	}
 	
-	uint32_t Cable::linkSpeed() const {
+	uint32_t Cable::linkSpeed() {
 		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
@@ -113,7 +113,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		return  ((cableData >> 8) & 0x07);
 	}
 	
-	uint32_t Cable::linkWidth() const {
+	uint32_t Cable::linkWidth() {
 		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
@@ -122,7 +122,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		return  ((cableData >> 11) & 0x0f);
 	}
 	
-	uint32_t Cable::linkActive() const {
+	uint32_t Cable::linkActive() {
 		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
@@ -131,7 +131,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		return  ((cableData >> 15) & 0x01);
 	}
 
-	uint32_t Cable::partitionID() const {
+	uint32_t Cable::partitionID() {
 		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
@@ -140,7 +140,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		return  ((cableData >> 16) & 0x0f);
 	}
 	
-	uint32_t Cable::invalid() const  {
+	uint32_t Cable::invalid() {
 		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
@@ -149,7 +149,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		return  ((cableData >> 20) & 0x0f);
 	}
 	
-	uint32_t Cable::uspDsp() const  {
+	uint32_t Cable::uspDsp()  {
 		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
@@ -158,7 +158,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		return  ((cableData >> 24) & 0x0f);
 	}
 
-	uint32_t Cable::status() const {
+	uint32_t Cable::status() {
 
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
@@ -170,3 +170,4 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 } // namespace manager
 } // namespace cable
 } // namespace phosphor
+
