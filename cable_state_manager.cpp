@@ -14,9 +14,6 @@ namespace manager
 // When you see server:: you know we're referencing our base class
 namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 	
-	Cable::Cable() {
-	}
-	
 	Cable::~Cable() {
 		Close();
 	}
@@ -37,8 +34,8 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		char* line = NULL;
 		uint32_t len = 0;
 		std::vector<std::string> value;
-		std::map<std::string, uint32_t> cableInfo;
-		std::map<std::string, uint32_t>::iterator iter; 
+		std::map<std::string, std::string> cableInfo;
+		std::map<std::string, std::string>::iterator iter; 
 		
 		//while(getline(fp, line)) {
 		while(getline(&line, &len, fp) != -1) {
@@ -46,7 +43,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 			std::string lineStr = line;
 			if(lineStr.substr(0, 3) == "CAB") {
 				value = Split(lineStr, ":");
-				cableInfo.insert(make_pair(value.front(), atoi(value.back().c_str())));
+				cableInfo.insert(make_pair(value.front(), value.back())));
 			}
 			
 			if(line != NULL) {
@@ -61,7 +58,12 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 			return -1;
 		} 
 		
-		return iter->second;
+		uint32_t data = 0;
+		stringstream ss(iter->second);
+		ss >> data;
+		ss.clear();
+		
+		return data;
 	}
 	
 	
@@ -84,100 +86,82 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 	
 	uint32_t Cable::cableType() const {
 		
-		Cable cable;
-		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
-		uint32_t cableData = cable.GetCableData(cableName);
+		uint32_t cableData =  GetCableData(cableName);
 		
 		
 		return  (cableData & 0x07);
 	}
 
 	uint32_t Cable::present() const {
-		
-		Cable cable;
-		
+
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
-		uint32_t cableData = cable.GetCableData(cableName);		
+		uint32_t cableData = GetCableData(cableName);		
 		
 		return  ((cableData >> 7) & 0x01);
 	}
 	
 	uint32_t Cable::linkSpeed() const {
 		
-		Cable cable;
-		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
-		uint32_t cableData = cable.GetCableData(cableName);
+		uint32_t cableData = GetCableData(cableName);
 		
 		return  ((cableData >> 8) & 0x07);
 	}
 	
 	uint32_t Cable::linkWidth() const {
 		
-		Cable cable;
-		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
-		uint32_t cableData = cable.GetCableData(cableName);		
+		uint32_t cableData =  GetCableData(cableName);		
 		
 		return  ((cableData >> 11) & 0x0f);
 	}
 	
 	uint32_t Cable::linkActive() const {
 		
-		Cable cable;
-		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
-		uint32_t cableData = cable.GetCableData(cableName);
+		uint32_t cableData =  GetCableData(cableName);
 		
 		return  ((cableData >> 15) & 0x01);
 	}
 
 	uint32_t Cable::partitionID() const {
 		
-		Cable cable;
-		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
-		uint32_t cableData = cable.GetCableData(cableName);
+		uint32_t cableData = GetCableData(cableName);
 		
 		return  ((cableData >> 16) & 0x0f);
 	}
 	
 	uint32_t Cable::invalid() const  {
 		
-		Cable cable;
-		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
-		uint32_t cableData = cable.GetCableData(cableName);
+		uint32_t cableData = GetCableData(cableName);
 		
 		return  ((cableData >> 20) & 0x0f);
 	}
 	
 	uint32_t Cable::uspDsp() const  {
 		
-		Cable cable;
-		
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
-		uint32_t cableData = cable.GetCableData(cableName);
+		uint32_t cableData = GetCableData(cableName);
 
 		return  ((cableData >> 24) & 0x0f);
 	}
 
 	uint32_t Cable::status() const {
-		
-		Cable cable;
-		
+
 		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
 		std::string cableName = "CAB" + slotNum;
-		uint32_t cableData = cable.GetCableData(cableName);
+		uint32_t cableData = GetCableData(cableName);
 		
 		return  ((cableData >> 28) & 0x0f);
 	}
