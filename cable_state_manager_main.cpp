@@ -13,8 +13,8 @@ int main(int argc, char**)
 	
     for(int i = 0; i < 12; i++) {
 		int cableNum = i + 1;
-		objPathInst += i;		
-		cables.emplace_back(std::make_unique<phosphor::cable::manager::Cable>(bus, objPathInst.c_str(), cableNum));
+		std::string objPath = objPathInst + i;		
+		cables.emplace_back(std::make_unique<phosphor::cable::manager::Cable>(bus, objPath.c_str(), cableNum));
 	}
 
     bus.request_name(CABLE_BUSNAME);
@@ -27,3 +27,4 @@ int main(int argc, char**)
 
     exit(EXIT_SUCCESS);
 }
+
