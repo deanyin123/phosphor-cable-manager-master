@@ -1,6 +1,6 @@
-#pragma once
 
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,15 +60,15 @@ class Cable : public CableInherit
 	vector<string> Split(string& info, const string& pattern);
 	void Close();
 	
-	uint32_t cableType() const override;
-	uint32_t present() const override;
-	uint32_t linkSpeed() const override;
-	uint32_t linkWidth() const override;
-	uint32_t linkActive() const override;
-	uint32_t partitionID() const override;
-	uint32_t invalid() const override;
-	uint32_t uspDsp() const override;
-	uint32_t status() const override;
+	uint32_t cableType();
+	uint32_t present();
+	uint32_t linkSpeed();
+	uint32_t linkWidth();
+	uint32_t linkActive();
+	uint32_t partitionID();
+	uint32_t invalid();
+	uint32_t uspDsp();
+	uint32_t status();
 	
 
   private:
@@ -84,5 +84,6 @@ class Cable : public CableInherit
 } // namespace manager
 } // namespace Cable
 } // namespace phosphor
+
 
 
