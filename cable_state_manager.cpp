@@ -1,16 +1,9 @@
-#pragma once
+#include <cassert>
+#include <phosphor-logging/log.hpp>
+#include <sdbusplus/exception.hpp>
+#include <sys/sysinfo.h>
+#include "cable_state_manager.hpp"
 
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string>
-#include <functional>
-#include <sdbusplus/bus.hpp>
-#include <xyz/openbmc_project/Cable/Cable/server.hpp>
-		
 namespace phosphor
 {
 namespace cable
@@ -18,72 +11,164 @@ namespace cable
 namespace manager
 {
 
-using CableInherit = sdbusplus::server::object::object<
-    sdbusplus::xyz::openbmc_project::Cable::server::Cable>;
+// When you see server:: you know we're referencing our base class
+namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 	
-using namespace std;
+	Cable::~Cable() {
+		Close();
+	}
+	
+	int Cable::Open() {
+		fp = popen("i2cusi -c cbinfo", "r");
+		return  fp != NULL ? 0 : -1;
+	}
+	
+	void Cable::Close(){
+		if(fp != NULL)
+			pclose(fp);
+		fp = NULL;
+	}
+	
+	uint32_t Cable::GetCableData(const std::string& cableName) {
 
-/** @class Cable
- *  @brief OpenBMC Cable state management implementation.
- *  @details A concrete implementation for xyz.openbmc_project.State.Cable
- *  DBus API.
- */
-class Cable : public CableInherit
-{
-  public:
-    /** @brief Constructs Cable State Manager
-     *
-     * @param[in] bus       - The Dbus bus object
-     * @param[in] objPath   - The Dbus object path
-     * @param[in] cableNum  - The cable number
-     */ 
-	
-	Cable(const Cable&) = delete;
-	Cable& operator=(const Cable&) = delete;
-	Cable(Cable&&) = delete;
-	Cable& operator=(Cable&&) = delete;
-	~Cable();	
-    Cable(sdbusplus::bus::bus& bus, const char* objPath, const uint32_t cableNum) :
-        CableInherit(bus, objPath, true), fp(NULL) { 
+		char* line = NULL;
+		uint32_t len = 0;
+		std::vector<std::string> value;
+		std::map<std::string, std::string> cableInfo;
+		std::map<std::string, std::string>::iterator iter; 
 		
-		if(Open() == -1) {
-			std::cerr << "Open error!" << std::endl;
+		//while(getline(fp, line)) {
+		while(getline(&line, &len, fp) != -1) {
+			
+			std::string lineStr = line;
+			if(lineStr.substr(0, 3) == "CAB") {
+				value = Split(lineStr, ":");
+				cableInfo.insert(make_pair(value.front(), value.back()));
+			}
+			
+			if(line != NULL) {
+				free(line);	
+				line = NULL;
+			}
 		}
 		
-		slotAddr(cableNum);
-		emit_object_added();
-    };
-	
-	
-	
-	int Open();
-	uint32_t GetCableData(const std::string& cableName);
-	vector<string> Split(string& info, const string& pattern);
-	void Close();
-	
-	uint32_t cableType() override;
-	uint32_t present() override;
-	uint32_t linkSpeed() override;
-	uint32_t linkWidth() override;
-	uint32_t linkActive() override;
-	uint32_t partitionID() override;
-	uint32_t invalid() override;
-	uint32_t uspDsp() override;
-	uint32_t status() override;
-	
 
-  private:
-  
-	FILE* fp;
+		if((iter = cableInfo.find(cableName)) == cableInfo.end()) {
+			std::cerr << "CableInformation not exit!" << std::endl;
+			return 0;
+		} 
+		
+		uint32_t data = 0;
+		stringstream ss;
+		ss << iter->second;
+		ss >> data;
+		ss.clear();
+		
+		return data;
+	}
 	
-    /** @brief Persistent sdbusplus DBus bus connection. **/
-    //sdbusplus::bus::bus& bus;
 	
+	std::vector<std::string> Cable::Split(std::string& info, const std::string& pattern) {		
+		std::vector<std::string> value;
+		
+		if(!info.empty()) {	
+			char * strc = new char[strlen(info.c_str()) + 1];
+			strcpy(strc, info.c_str());
+			char* tmpStr = strtok(strc, pattern.c_str());			
+			while(tmpStr != NULL) {
+				value.push_back(std::string(tmpStr));
+				tmpStr = strtok(NULL, pattern.c_str());
+			}
+			delete[] strc;
+		}
+		
+		return value;
+	}
+	
+	uint32_t Cable::cableType() {
+		
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
+		std::string cableName = "CAB" + slotNum;
+		uint32_t cableData =  GetCableData(cableName);
+		
+		
+		return  (cableData & 0x07);
+	}
 
-};
+	uint32_t Cable::present() {
+
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
+		std::string cableName = "CAB" + slotNum;
+		uint32_t cableData = GetCableData(cableName);		
+		
+		return  ((cableData >> 7) & 0x01);
+	}
+	
+	uint32_t Cable::linkSpeed() {
+		
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
+		std::string cableName = "CAB" + slotNum;
+		uint32_t cableData = GetCableData(cableName);
+		
+		return  ((cableData >> 8) & 0x07);
+	}
+	
+	uint32_t Cable::linkWidth() {
+		
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
+		std::string cableName = "CAB" + slotNum;
+		uint32_t cableData =  GetCableData(cableName);		
+		
+		return  ((cableData >> 11) & 0x0f);
+	}
+	
+	uint32_t Cable::linkActive() {
+		
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
+		std::string cableName = "CAB" + slotNum;
+		uint32_t cableData =  GetCableData(cableName);
+		
+		return  ((cableData >> 15) & 0x01);
+	}
+
+	uint32_t Cable::partitionID() {
+		
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
+		std::string cableName = "CAB" + slotNum;
+		uint32_t cableData = GetCableData(cableName);
+		
+		return  ((cableData >> 16) & 0x0f);
+	}
+	
+	uint32_t Cable::invalid() {
+		
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
+		std::string cableName = "CAB" + slotNum;
+		uint32_t cableData = GetCableData(cableName);
+		
+		return  ((cableData >> 20) & 0x0f);
+	}
+	
+	uint32_t Cable::uspDsp()  {
+		
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
+		std::string cableName = "CAB" + slotNum;
+		uint32_t cableData = GetCableData(cableName);
+
+		return  ((cableData >> 24) & 0x0f);
+	}
+
+	uint32_t Cable::status() {
+
+		auto slotNum = sdbusplus::xyz::openbmc_project::Cable::server::Cable::slotAddr();
+		std::string cableName = "CAB" + slotNum;
+		uint32_t cableData = GetCableData(cableName);
+		
+		return  ((cableData >> 28) & 0x0f);
+	}
 
 } // namespace manager
-} // namespace Cable
+} // namespace cable
 } // namespace phosphor
 
 
