@@ -37,7 +37,7 @@ class Cable : public CableInherit
      * @param[in] objPath   - The Dbus object path
      * @param[in] cableNum  - The cable number
      */ 
-	
+	Cable() = delete;
 	Cable(const Cable&) = delete;
 	Cable& operator=(const Cable&) = delete;
 	Cable(Cable&&) = delete;
@@ -61,15 +61,15 @@ class Cable : public CableInherit
 	vector<string> Split(string& info, const string& pattern);
 	void Close();
 	
-	uint32_t cableType();
-	uint32_t present();
-	uint32_t linkSpeed();
-	uint32_t linkWidth();
-	uint32_t linkActive();
-	uint32_t partitionID();
-	uint32_t invalid();
-	uint32_t uspDsp();
-	uint32_t status();
+	uint32_t cableType() ;
+	uint32_t present() ;
+	uint32_t linkSpeed() ;
+	uint32_t linkWidth() ;
+	uint32_t linkActive() ;
+	uint32_t partitionID() ;
+	uint32_t invalid() ;
+	uint32_t uspDsp() ;
+	uint32_t status() ;
 	
 
   private:
