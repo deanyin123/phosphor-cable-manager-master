@@ -56,7 +56,7 @@ class Cable : public CableInherit
 	
 	
 	int Open();
-	int32_t GetCableData(const std::string& cableName);
+	uint32_t GetCableData(const std::string& cableName);
 	vector<string> Split(string& info, const string& pattern);
 	void Close();
 	
@@ -84,4 +84,5 @@ class Cable : public CableInherit
 } // namespace manager
 } // namespace Cable
 } // namespace phosphor
+
 
