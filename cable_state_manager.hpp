@@ -35,15 +35,13 @@ class Cable : public CableInherit
      * @param[in] bus       - The Dbus bus object
      * @param[in] objPath   - The Dbus object path
      * @param[in] cableNum  - The cable number
-     */
-	 
-	Cable();
-	~Cable();
+     */ 
+	
 	Cable(const Cable&) = delete;
 	Cable& operator=(const Cable&) = delete;
 	Cable(Cable&&) = delete;
 	Cable& operator=(Cable&&) = delete;
-		
+	~Cable();	
     Cable(sdbusplus::bus::bus& bus, const char* objPath, const uint32_t cableNum) :
         CableInherit(bus, objPath, true), fp(NULL) { 
 		
@@ -86,3 +84,4 @@ class Cable : public CableInherit
 } // namespace manager
 } // namespace Cable
 } // namespace phosphor
+
