@@ -29,7 +29,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 		fp = NULL;
 	}
 	
-	int32_t Cable::GetCableData(const std::string& cableName) {
+	uint32_t Cable::GetCableData(const std::string& cableName) {
 
 		char* line = NULL;
 		uint32_t len = 0;
@@ -43,7 +43,7 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 			std::string lineStr = line;
 			if(lineStr.substr(0, 3) == "CAB") {
 				value = Split(lineStr, ":");
-				cableInfo.insert(make_pair(value.front(), value.back())));
+				cableInfo.insert(make_pair(value.front(), value.back()));
 			}
 			
 			if(line != NULL) {
@@ -55,11 +55,12 @@ namespace server = sdbusplus::xyz::openbmc_project::Cable::server;
 
 		if((iter = cableInfo.find(cableName)) == cableInfo.end()) {
 			std::cerr << "CableInformation not exit!" << std::endl;
-			return -1;
+			return 0;
 		} 
 		
 		uint32_t data = 0;
-		stringstream ss(iter->second);
+		stringstream ss;
+		ss << iter->second;
 		ss >> data;
 		ss.clear();
 		
